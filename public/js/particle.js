@@ -17,7 +17,7 @@ class Air extends Particle {
 
 class Sand extends Particle {
 	constructor() {
-		super("sand", [194,187,54]);
+		super("sand", [227, 211, 86]);
 	}
 
 	update(x, y, grid) {
@@ -45,11 +45,12 @@ class Sand extends Particle {
 				left = true;
 			}
 		}
-		if (x+1 < grid.length-1) {
+		if (x+1 < grid.length) {
 			if (grid[x+1][y].type === "air" && grid[x+1][y+1].type === "air") {
 				right = true;
 			}
 		}
+		
 		//If sand can move left or right choose a pseudo-random direction
 		if (left && right) {
 			//If framecount is even, move left

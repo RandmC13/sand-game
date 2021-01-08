@@ -11,9 +11,10 @@ let grid = [];
 let framerate = 60;
 
 function setup(){
-	let menuHeight = document.getElementById("menu").offsetHeight;
-	canvasWidth = windowWidth;
-	canvasHeight = windowHeight - menuHeight;
+	//let menuHeight = document.getElementById("menu").offsetHeight;
+	let menuWidth = document.getElementById("menu").offsetWidth;
+	canvasWidth = windowWidth - menuWidth;
+	canvasHeight = windowHeight;
 	let canvas = createCanvas(canvasWidth,canvasHeight);
 	canvas.parent("canvas");
 	frameRate(framerate)
@@ -22,17 +23,11 @@ function setup(){
 	gridMarginX = Math.floor((canvasWidth - (gridWidth*pixelSize)) / 2);
 	gridMarginY = Math.floor((canvasHeight - (gridHeight*pixelSize)) / 2);
 
-	for (x=0;x<gridWidth;x++) {
-		let row = [];
-		for (y=0;y<gridHeight;y++) {
-			row.push(new Air());
-		}
-		grid.push(row);
-	}
+	clearCanvas();
 }
 
 function draw(){
-	background(20, 125, 181);
+	background(41, 147, 217);
 
 	noStroke();
 
@@ -48,8 +43,8 @@ function draw(){
 
 	//Spawn particles where clicked
 	if (mouseIsPressed) {
-		let particleX = Math.floor((mouseX)/pixelSize);
-		let particleY = Math.floor((mouseY)/pixelSize);
+		let particleX = Math.floor((mouseX+gridMarginX)/pixelSize)-1;
+		let particleY = Math.floor((mouseY+gridMarginY)/pixelSize)-1;
 
 		if (particleX < grid.length && particleY < grid[0].length) {
 			grid[particleX][particleY] = new Sand();
@@ -71,6 +66,21 @@ function draw(){
 	}
 }
 
-function mousePressed() {
+/*
 
+Button Functions
+
+*/
+
+function clearCanvas() {
+
+	grid = [];
+
+	for (x=0;x<gridWidth;x++) {
+		let row = [];
+		for (y=0;y<gridHeight;y++) {
+			row.push(new Air());
+		}
+		grid.push(row);
+	}
 }

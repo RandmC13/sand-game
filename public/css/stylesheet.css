@@ -1,3 +1,78 @@
-#menu {
+html,body {
 	margin: 0px;
+	height: 100%;
+	overflow: hidden;
+	padding: 0px;
+}
+
+#canvas {
+	margin: 0px;
+	float: left;
+}
+
+#menu {
+	float:	right;
+	margin: 0px;
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	min-height: 100%;
+
+	background-color: rgb(204, 204, 204);
+
+	font-family: 'Arial', sans-serif;
+}
+
+#menu h1 {
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+
+	padding-left: 2px;
+	padding-right: 2px;
+
+	border-radius: 10px;
+	border-style: solid;
+	border-color: rgb(41, 88, 217);
+	background-color: rgb(41, 88, 217);
+}
+
+a.button {
+	display: inline-block;
+	padding: 0.2em 1.45em;
+	margin: 0.1em;
+	border: 0.15em solid rgb(160,160,160);
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: 'Segoe UI','Roboto','Arial',sans-serif;
+	font-weight: 400;
+	color: #000000;
+	background-color: rgb(160,160,160);
+	text-align: center;
+	position: relative;
+}
+
+a.button:hover {
+	border-color: #7a7a7a;
+}
+
+a.button:active {
+	background-color: #787878;
+}
+
+@media all and (max-width: 30em) {
+	a.button {
+		display: block;
+		margin: 0.2em auto;
+	}
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
