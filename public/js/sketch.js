@@ -4,17 +4,23 @@ let gridHeight;
 let gridMarginX;
 let gridMarginY;
 
+let canvasWidth;
+let canvasHeight;
+
 let grid = [];
 let framerate = 60;
 
 function setup(){
-	let canvas = createCanvas(windowWidth,windowHeight);
+	let menuHeight = document.getElementById("menu").offsetHeight;
+	canvasWidth = windowWidth;
+	canvasHeight = windowHeight - menuHeight;
+	let canvas = createCanvas(canvasWidth,canvasHeight);
 	canvas.parent("canvas");
 	frameRate(framerate)
-	gridWidth = Math.floor(windowWidth / pixelSize);
-	gridHeight = Math.floor(windowHeight / pixelSize);
-	gridMarginX = Math.floor((windowWidth - (gridWidth*pixelSize)) / 2);
-	gridMarginY = Math.floor((windowHeight - (gridHeight*pixelSize)) / 2);
+	gridWidth = Math.floor(canvasWidth / pixelSize);
+	gridHeight = Math.floor(canvasHeight / pixelSize);
+	gridMarginX = Math.floor((canvasWidth - (gridWidth*pixelSize)) / 2);
+	gridMarginY = Math.floor((canvasHeight - (gridHeight*pixelSize)) / 2);
 
 	for (x=0;x<gridWidth;x++) {
 		let row = [];
