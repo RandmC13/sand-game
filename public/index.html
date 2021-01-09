@@ -6,12 +6,20 @@
 	<script src="p5/p5.js"></script>
 	<script src="js/particle.js"></script>
 	<script src="js/sketch.js"></script>
+	<script src="js/htmlfunctions.js"></script>
 </head>
 <body>
 	<div id="canvas"></div>
 	<div id="menu" class="noselect">
-		<h1>Sand Game</h1>
+		<h1 class="title">Sand Game</h1>
 		<a onclick="clearCanvas()" class="button">Clear</a>
+		<div class="slidecontainer">
+			<h5>Brush Mode:</h5>
+			<input type="checkbox"  id="brushToggle" name="brushToggle" value="Brush" onchange="changeBrushCheckboxLabel()">
+			<label for="brushToggle" id="brushToggleLabel">Off</label><br>
+			<input type="range" min="1" max="20" value="1" class="slider" id="brushSlider" oninput="changeBrushSliderLabel()" onchange="changeBrushSliderLabel()">
+			<label for="brushSlider" id="brushSliderLabel">1</label>
+		</div>
 	</div>
 </body>
 </html>

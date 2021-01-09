@@ -4,19 +4,73 @@ let gridHeight;
 let gridMarginX;
 let gridMarginY;
 
+let canvas;
 let canvasWidth;
 let canvasHeight;
+let mouseOverCanvas = false;
 
 let grid = [];
 let framerate = 60;
+
+/*
+
+Functions
+
+*/
+
+function clearCanvas() {
+
+	grid = [];
+
+	for (x=0;x<gridWidth;x++) {
+		let row = [];
+		for (y=0;y<gridHeight;y++) {
+			row.push(new Air());
+		}
+		grid.push(row);
+	}
+}
+
+function drawCircle(xc, yc, r) {
+	//Bruteforce algorithm for drawing circles
+	for (y=-r;y<=r;y++) {
+		for (x=-r;x<=r;x++) {
+			if (x*x+y*y <= r * r) {
+				if (xc+x >= 0 && xc+x <= grid.length-1) {
+					if (yc+y >= 0 && yc+y <= grid[0].length-1) {
+						grid[xc+x][Math.round(yc+y)] = new Sand();
+					}
+				}
+			}
+		}
+	}
+
+}
+
+function mouseOnCanvas() {
+	mouseOverCanvas = true;
+}
+
+function mouseOffCanvas() {
+	mouseOverCanvas = false;
+}
+
+/*
+
+Main Loop
+
+*/
 
 function setup(){
 	//let menuHeight = document.getElementById("menu").offsetHeight;
 	let menuWidth = document.getElementById("menu").offsetWidth;
 	canvasWidth = windowWidth - menuWidth;
 	canvasHeight = windowHeight;
-	let canvas = createCanvas(canvasWidth,canvasHeight);
+	canvas = createCanvas(canvasWidth,canvasHeight);
 	canvas.parent("canvas");
+	canvas.mouseOver(mouseOnCanvas);
+	canvas.mouseOut(mouseOffCanvas);
+
 	frameRate(framerate)
 	gridWidth = Math.floor(canvasWidth / pixelSize);
 	gridHeight = Math.floor(canvasHeight / pixelSize);
@@ -36,15 +90,25 @@ function draw(){
 	//Get changes to be made
 	for (x=0;x<grid.length;x++) {
 		for(y=0;y<grid[x].length;y++) {
-			let change = grid[x][y].update(x,y,grid);
-			if (change) {changes.push(change)}
+			if (!grid[x][y].static){
+				let change = grid[x][y].update(x,y,grid);
+				if (change) {changes.push(change)}
+			}
 		}
 	}
 
 	//Spawn particles where clicked
-	if (mouseIsPressed) {
+	if (mouseIsPressed && mouseOverCanvas) {
 		let particleX = Math.floor((mouseX+gridMarginX)/pixelSize)-1;
 		let particleY = Math.floor((mouseY+gridMarginY)/pixelSize)-1;
+
+		//Check if brush mode is on
+		let brushCheckbox = document.getElementById("brushToggle");
+		let brushSlider = document.getElementById("brushSlider");
+
+		if (brushCheckbox.checked) {
+			drawCircle(particleX,particleY,brushSlider.value);
+		}
 
 		if (particleX < grid.length && particleY < grid[0].length) {
 			grid[particleX][particleY] = new Sand();
@@ -63,24 +127,5 @@ function draw(){
 			fill(grid[x][y].colour[0],grid[x][y].colour[1],grid[x][y].colour[2]); //Set fill to particle's colour
 			square((x*pixelSize)+gridMarginX,(y*pixelSize)+gridMarginY,pixelSize);
 		}
-	}
-}
-
-/*
-
-Button Functions
-
-*/
-
-function clearCanvas() {
-
-	grid = [];
-
-	for (x=0;x<gridWidth;x++) {
-		let row = [];
-		for (y=0;y<gridHeight;y++) {
-			row.push(new Air());
-		}
-		grid.push(row);
 	}
 }

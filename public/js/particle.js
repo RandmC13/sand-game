@@ -2,6 +2,7 @@ class Particle {
 	constructor(type, colour) {
 		this.type = type;
 		this.colour = colour;
+		this.static = false;
 	}
 
 	update(x, y, grid){
@@ -12,6 +13,14 @@ class Particle {
 class Air extends Particle {
 	constructor() {
 		super("air", [0,0,0]);
+		this.static = true;
+	}
+}
+
+class Metal extends Particle {
+	constructor() {
+		super("metal", [133, 133, 133])
+		this.static = true;
 	}
 }
 
@@ -50,7 +59,7 @@ class Sand extends Particle {
 				right = true;
 			}
 		}
-		
+
 		//If sand can move left or right choose a pseudo-random direction
 		if (left && right) {
 			//If framecount is even, move left
