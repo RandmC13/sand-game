@@ -14,11 +14,17 @@
 		<h1 class="title">Sand Game</h1>
 		<a onclick="clearCanvas()" class="button">Clear</a>
 		<div class="slidecontainer">
-			<h5>Brush Mode:</h5>
-			<input type="checkbox"  id="brushToggle" name="brushToggle" value="Brush" onchange="changeBrushCheckboxLabel()">
-			<label for="brushToggle" id="brushToggleLabel">Off</label><br>
-			<input type="range" min="1" max="20" value="1" class="slider" id="brushSlider" oninput="changeBrushSliderLabel()" onchange="changeBrushSliderLabel()">
+			<h5>Brush Size:</h5>
+			<input type="range" min="0" max="20" value="1" class="slider" id="brushSlider" oninput="changeBrushSliderLabel()" onchange="changeBrushSliderLabel()">
 			<label for="brushSlider" id="brushSliderLabel">1</label>
+		</div>
+		<div class="particleButtons">
+			<h5>Choose a Particle:</h5>
+			<div id="row1" class="row">
+				<a id="sandButton" class="particleButton" onclick="setParticle('sand', 'sandButton')">Sand</a>
+				<a id="metalButton" class="particleButton" onclick="setParticle('metal', 'metalButton')">Metal</a>
+				<a id="airButton" class="particleButton" onclick="setParticle('air', 'airButton')">Air</a>
+			</div>
 		</div>
 	</div>
 </body>

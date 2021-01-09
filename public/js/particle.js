@@ -35,6 +35,7 @@ class Sand extends Particle {
 
 		//If the sand reaches the bottom, stop moving it
 		if (y+1 > grid[x].length-1) {
+			this.static = true;
 			return false;
 		}
 

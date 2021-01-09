@@ -12,6 +12,8 @@ let mouseOverCanvas = false;
 let grid = [];
 let framerate = 60;
 
+let selectedParticle = "sand";
+
 /*
 
 Functions
@@ -38,7 +40,18 @@ function drawCircle(xc, yc, r) {
 			if (x*x+y*y <= r * r) {
 				if (xc+x >= 0 && xc+x <= grid.length-1) {
 					if (yc+y >= 0 && yc+y <= grid[0].length-1) {
-						grid[xc+x][Math.round(yc+y)] = new Sand();
+						//Spawn the selected particle
+						switch (selectedParticle) {
+							case "sand":
+								grid[xc+x][Math.round(yc+y)] = new Sand();
+								break;
+							case "metal":
+								grid[xc+x][Math.round(yc+y)] = new Metal();
+								break;
+							case "air":
+								grid[xc+x][Math.round(yc+y)] = new Air();
+								break;
+						}
 					}
 				}
 			}
@@ -53,6 +66,20 @@ function mouseOnCanvas() {
 
 function mouseOffCanvas() {
 	mouseOverCanvas = false;
+}
+
+function setParticle(type, id) {
+	selectedParticle = type;
+
+	//Reset all buttons
+	let buttons = document.getElementsByClassName("particleButtons")[0].getElementsByTagName("a");
+	
+	for (i=0;i<buttons.length;i++) {
+		buttons[i].className = "particleButton";
+	}
+
+	//Change color of button pressed
+	document.getElementById(id).className = "selectedButton";
 }
 
 /*
@@ -99,20 +126,13 @@ function draw(){
 
 	//Spawn particles where clicked
 	if (mouseIsPressed && mouseOverCanvas) {
-		let particleX = Math.floor((mouseX+gridMarginX)/pixelSize)-1;
+		let particleX = Math.floor((mouseX+gridMarginX)/pixelSize);
 		let particleY = Math.floor((mouseY+gridMarginY)/pixelSize)-1;
 
-		//Check if brush mode is on
-		let brushCheckbox = document.getElementById("brushToggle");
+		//Draw circle with chosen slider radius
 		let brushSlider = document.getElementById("brushSlider");
-
-		if (brushCheckbox.checked) {
-			drawCircle(particleX,particleY,brushSlider.value);
-		}
-
-		if (particleX < grid.length && particleY < grid[0].length) {
-			grid[particleX][particleY] = new Sand();
-		}
+			
+		drawCircle(particleX,particleY,brushSlider.value);
 	}
 
 	//make changes

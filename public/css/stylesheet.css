@@ -31,6 +31,8 @@ html,body {
 	padding-left: 2px;
 	padding-right: 2px;
 
+	text-align: center;
+
 	border-radius: 10px;
 	border-style: solid;
 	border-color: rgb(41, 88, 217);
@@ -68,11 +70,12 @@ a.button:active {
 }
 
 .slidecontainer {
-	margin-top: 5px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .slidecontainer h5 {
-	margin: 0px;
+	margin: 5px;
 }
 
 .slidecontainer label {
@@ -80,11 +83,71 @@ a.button:active {
 	margin-right: 4px;
 	font-size: 13px;
 	vertical-align: top;
-	color: black;
+	color: red;
 }
 
-#brushSliderLabel {
-	color:	red;
+.row {
+	padding: 5px;
+}
+
+.particleButtons h5 {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	text-align: center;
+}
+
+a.particleButton {
+	display: inline-block;
+	padding: 0.3em 1.2em;
+	margin:	0 0.3em 0.3em 0;
+	border-radius: 2em;
+	border-width: 2px;
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: 'Roboto', 'Arial', sans-serif;
+	font-weight: 300;
+	color: #FFFFFF;
+	background-color: rgb(41, 88, 217);
+	text-align: center;
+	transition: all 0.2s;
+}
+
+a.particleButton:hover {
+	background-color: rgb(61, 138, 219);
+}
+
+@media all and (max-width: 30em) {
+	a.particleButton {
+		display: block;
+		margin: 0.2em auto;
+	}
+}
+
+a.selectedButton {
+	display: inline-block;
+	padding: 0.3em 1.2em;
+	margin:	0 0.3em 0.3em 0;
+	border-radius: 2em;
+	border-width: 2px;
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: 'Roboto', 'Arial', sans-serif;
+	font-weight: 300;
+	color: black;
+	background-color: red;
+	text-align: center;
+	transition: all 0.2s;
+}
+
+a.selectedButton:hover {
+	background-color: rgb(255, 71, 71);
+}
+
+@media all and (max-width: 30em) {
+	a.selectedButton {
+		display: block;
+		margin: 0.2em auto;
+	}
 }
 
 .noselect {
