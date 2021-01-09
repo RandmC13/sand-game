@@ -64,7 +64,7 @@ class Sand extends Particle {
 		//If sand can move left or right choose a pseudo-random direction
 		if (left && right) {
 			//If framecount is even, move left
-			if (frameCount % 2 === 0) {
+			if (Math.random() < 0.5) {
 				changes.push([x-1,y+1,grid[x][y]]);
 				changes.push([x,y,new Air()]);
 
@@ -105,11 +105,13 @@ class Water extends Particle {
 		let changes = [];
 
 		//If air is below the water, it falls
-		if (grid[x][y+1].type === "air") {
-			changes.push([x,y+1,grid[x][y]]);
-			changes.push([x,y,new Air()]);
+		if (y+1 < grid[0].length) {
+			if (grid[x][y+1].type === "air") {
+				changes.push([x,y+1,grid[x][y]]);
+				changes.push([x,y,new Air()]);
 
-			return changes;
+				return changes;
+			}
 		}
 
 		//If air is down and to the left of the water, move it there
@@ -121,29 +123,31 @@ class Water extends Particle {
 			if (grid[x-1][y].type === "air") {
 				left = true;
 			}
-			if (y+1 < grid[0].length && grid[x-1][y+1].type === "air") {
-				ldown = true;
+			if (y+1 < grid[0].length) {
+				if (grid[x-1][y+1].type === "air") {
+					ldown = true;
+				}
 			}
 		}
 		if (x+1 < grid.length) {
 			if (grid[x+1][y].type === "air") {
 				right = true;
 			}
-			if (y+1 < grid[0].length && grid[x+1][y+1].type === "air") {
-				rdown = true;
+			if (y+1 < grid[0].length) {
+				if (grid[x+1][y+1].type === "air") {
+					rdown = true;
+				}
 			}
 		}
 
 		//If water can move left and down or right and down choose a pseudo-random direction
 		if (ldown && rdown) {
-			//If framecount is even, move left
-			if (frameCount % 2 === 0) {
+			if (Math.random() < 0.5) {
 				changes.push([x-1,y+1,grid[x][y]]);
 				changes.push([x,y,new Air()]);
 
 				return changes;
 			}
-			//If it is odd, move right
 			else {
 				changes.push([x+1,y+1,grid[x][y]]);
 				changes.push([x,y,new Air()]);
@@ -169,7 +173,7 @@ class Water extends Particle {
 		//If water can move horizontally left or horizontally right choose a pseudo-random direction
 		if (left && right) {
 			//If framecount is even, move left
-			if (frameCount % 2 === 0) {
+			if (Math.random() < 0.5) {
 				changes.push([x-1,y,grid[x][y]]);
 				changes.push([x,y,new Air()]);
 
@@ -198,5 +202,7 @@ class Water extends Particle {
 
 			return changes;
 		}
+
+		return false;
 	}
 }
