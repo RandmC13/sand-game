@@ -53,7 +53,6 @@ function drawCircle(xc, yc, r) {
 								break;
 							case "water":
 								grid[xc+x][Math.round(yc+y)] = new Water();
-								break;
 						}
 					}
 				}
@@ -101,12 +100,14 @@ function setup(){
 	canvas.mouseOver(mouseOnCanvas);
 	canvas.mouseOut(mouseOffCanvas);
 
+	//Set framerate
 	frameRate(framerate)
 	gridWidth = Math.floor(canvasWidth / pixelSize);
 	gridHeight = Math.floor(canvasHeight / pixelSize);
 	gridMarginX = Math.floor((canvasWidth - (gridWidth*pixelSize)) / 2);
 	gridMarginY = Math.floor((canvasHeight - (gridHeight*pixelSize)) / 2);
 
+	//Fills grid array with air
 	clearCanvas();
 }
 
@@ -123,6 +124,11 @@ function draw(){
 			if (!grid[x][y].static){
 				let change = grid[x][y].update(x,y,grid);
 				if (change) {changes.push(change)}
+
+				//If liquid can't move downward, attempt to dissipate
+				if (grid[x][y].liquid && !change) {
+					grid[x][y].dissipate(x,y,grid);
+				}
 			}
 		}
 	}

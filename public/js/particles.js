@@ -3,6 +3,7 @@ class Particle {
 		this.type = type;
 		this.colour = colour;
 		this.static = false;
+		this.liquid = false;
 	}
 
 	update(x, y, grid){
@@ -27,6 +28,7 @@ class Metal extends Particle {
 class Sand extends Particle {
 	constructor() {
 		super("sand", [227, 211, 86]);
+		this.density = 10;
 	}
 
 	update(x, y, grid) {
@@ -37,12 +39,20 @@ class Sand extends Particle {
 		if (y+1 > grid[x].length-1) {
 			this.static = true;
 			return false;
-		}
+		} 
 
 		//If air is below the sand, it falls
 		if (grid[x][y+1].type === "air") {
 			changes.push([x,y+1,grid[x][y]]);
 			changes.push([x,y,new Air()]);
+
+			return changes;
+		}
+
+		//If it is denser than the liquid below it, it sinks
+		if (grid[x][y+1].liquid && this.density > grid[x][y+1].density) {
+			changes.push([x,y+1,grid[x][y]]);
+			changes.push([x,y,grid[x][y+1]]);
 
 			return changes;
 		}
@@ -63,14 +73,12 @@ class Sand extends Particle {
 
 		//If sand can move left or right choose a pseudo-random direction
 		if (left && right) {
-			//If framecount is even, move left
 			if (Math.random() < 0.5) {
 				changes.push([x-1,y+1,grid[x][y]]);
 				changes.push([x,y,new Air()]);
 
 				return changes;
 			}
-			//If it is odd, move right
 			else {
 				changes.push([x+1,y+1,grid[x][y]]);
 				changes.push([x,y,new Air()]);
@@ -98,50 +106,42 @@ class Sand extends Particle {
 class Water extends Particle {
 	constructor() {
 		super("water", [28,163,236]);
+		this.liquid = true;
+		this.density = 1;
 	}
 
-	update(x, y, grid) {
-
+	update(x,y,grid) {
 		let changes = [];
 
-		//If air is below the water, it falls
-		if (y+1 < grid[0].length) {
-			if (grid[x][y+1].type === "air") {
-				changes.push([x,y+1,grid[x][y]]);
-				changes.push([x,y,new Air()]);
+		//If the water reaches the bottom, stop moving it
+		if (y+1 > grid[x].length-1) {
+			return false;
+		} 
 
-				return changes;
-			}
+		//If air is below the water, it falls
+		if (grid[x][y+1].type === "air") {
+			changes.push([x,y+1,grid[x][y]]);
+			changes.push([x,y,new Air()]);
+
+			return changes;
 		}
 
 		//If air is down and to the left of the water, move it there
 		let left = false;
 		let right = false;
-		let ldown = false;
-		let rdown = false;
 		if (x-1 >= 0) {
-			if (grid[x-1][y].type === "air") {
+			if (grid[x-1][y].type === "air" && grid[x-1][y+1].type === "air") {
 				left = true;
-			}
-			if (y+1 < grid[0].length) {
-				if (grid[x-1][y+1].type === "air") {
-					ldown = true;
-				}
 			}
 		}
 		if (x+1 < grid.length) {
-			if (grid[x+1][y].type === "air") {
+			if (grid[x+1][y].type === "air" && grid[x+1][y+1].type === "air") {
 				right = true;
-			}
-			if (y+1 < grid[0].length) {
-				if (grid[x+1][y+1].type === "air") {
-					rdown = true;
-				}
 			}
 		}
 
-		//If water can move left and down or right and down choose a pseudo-random direction
-		if (ldown && rdown) {
+		//If water can move left or right choose a pseudo-random direction
+		if (left && right) {
 			if (Math.random() < 0.5) {
 				changes.push([x-1,y+1,grid[x][y]]);
 				changes.push([x,y,new Air()]);
@@ -155,54 +155,72 @@ class Water extends Particle {
 				return changes;
 			}
 		}
-		//If water can only move left and down or right and down, move in that direction
-		if (ldown) {
+		//If water can only move left or right, move in that direction
+		if (left) {
 			changes.push([x-1,y+1,grid[x][y]]);
 			changes.push([x,y,new Air()]);
 
 			return changes;
 		}
 
-		if (rdown) {
+		if (right) {
 			changes.push([x+1,y+1,grid[x][y]]);
 			changes.push([x,y,new Air()]);
 
 			return changes;			
 		}
+	}
 
-		//If water can move horizontally left or horizontally right choose a pseudo-random direction
-		if (left && right) {
-			//If framecount is even, move left
-			if (Math.random() < 0.5) {
-				changes.push([x-1,y,grid[x][y]]);
-				changes.push([x,y,new Air()]);
+	dissipate(x,y,grid) {
+		//This function causes the water to spread out horizontally if it is unable to move downwards
+		let left = false;
+		let right = false;
 
-				return changes;	
-			}
-			//If framecount is odd, move right
-			else {
-				changes.push([x+1,y,grid[x][y]]);
-				changes.push([x,y,new Air()]);
-
-				return changes;
+		if (x-1 >= 0) {
+			if (grid[x-1][y].type === "air") {
+				left = true;
 			}
 		}
 
-		//If water can only move in one direction horizontally, move in that direction
-		if (left) {
-			changes.push([x-1,y,grid[x][y]]);
-			changes.push([x,y,new Air()]);
-
-			return changes;	
+		if (x+1 < grid.length) {
+			if (grid[x+1][y].type === "air") {
+				right = true;
+			}
 		}
 
-		if (right) {
-			changes.push([x+1,y,grid[x][y]]);
-			changes.push([x,y,new Air()]);
+		//Water has a 90% chance of moving left or right
+		if (Math.random() < 0.9) {
 
-			return changes;
+			//If water can move left or right choose a random direction
+			if (left && right) {
+				if (Math.random() < 0.5) {
+					grid[x-1][y] = grid[x][y];
+					grid[x][y] = new Air();
+
+					return true;
+				} else {
+					grid[x+1][y] = grid[x][y];
+					grid[x][y] = new Air();
+
+					return true;
+				}
+			}
+
+			//If water can only move in one direction, go in that direction
+
+			if (left) {
+				grid[x-1][y] = grid[x][y];
+				grid[x][y] = new Air();
+
+				return true;
+			}
+
+			if (right) {
+				grid[x+1][y] = grid[x][y];
+				grid[x][y] = new Air();
+
+				return true;
+			}
 		}
-
-		return false;
 	}
 }
