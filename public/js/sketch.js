@@ -51,6 +51,9 @@ function drawCircle(xc, yc, r) {
 							case "air":
 								grid[xc+x][Math.round(yc+y)] = new Air();
 								break;
+							case "water":
+								grid[xc+x][Math.round(yc+y)] = new Water();
+								break;
 						}
 					}
 				}
