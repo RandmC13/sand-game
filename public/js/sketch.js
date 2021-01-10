@@ -12,7 +12,19 @@ let mouseOverCanvas = false;
 let grid = [];
 let framerate = 60;
 
-let selectedParticle = "sand";
+let selectedParticle;
+
+//Particle Type Descriptions
+
+let descriptions = {
+	"air": `Air: A simple placeholder particle that represents that absence of anything.`,
+	"metal": `Metal: A dark grey particle with no gravity that is dissolved by acid.`,
+	"sand": `Sand: A yellow powder, affected by gravity, that naturally forms piles and sinks in water.`,
+	"water": `Water: A blue liquid that will over time distribute itself horizontally to fill up the space it exists in.`,
+	"acid": `Acid: A green liquid that acts like water except it will dissolve metal on contact, converting it into air.`,
+	"fire0": `Fire: A particle that exists in a random colour between red and yellow and will create child particles that float upwards. Also it burns stuff.`,
+	"torch": `Torch: An orange particle that will infinitely generate fire if there is air above it.`,
+};
 
 /*
 
@@ -53,6 +65,15 @@ function drawCircle(xc, yc, r) {
 								break;
 							case "water":
 								grid[xc+x][Math.round(yc+y)] = new Water();
+								break;
+							case "acid":
+								grid[xc+x][Math.round(yc+y)] = new Acid();
+								break;
+							case "fire0":
+								grid[xc+x][Math.round(yc+y)] = new Fire0();
+								break;
+							case "torch":
+								grid[xc+x][Math.round(yc+y)] = new Torch();
 						}
 					}
 				}
@@ -82,6 +103,9 @@ function setParticle(type, id) {
 
 	//Change color of button pressed
 	document.getElementById(id).className = "selectedButton";
+
+	//Set description
+	document.getElementById("description").innerHTML = descriptions[type];
 }
 
 /*
@@ -106,6 +130,9 @@ function setup(){
 	gridHeight = Math.floor(canvasHeight / pixelSize);
 	gridMarginX = Math.floor((canvasWidth - (gridWidth*pixelSize)) / 2);
 	gridMarginY = Math.floor((canvasHeight - (gridHeight*pixelSize)) / 2);
+
+	//Sets the particle to sand
+	setParticle('sand', 'sandButton');
 
 	//Fills grid array with air
 	clearCanvas();

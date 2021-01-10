@@ -146,6 +146,20 @@ a.selectedButton {
 	}
 }
 
+.descriptionDiv {
+	word-wrap: break-word;
+	max-width: 245px;
+	font-size: 15px;
+	margin-top: 5px;
+	font-family: 'Roboto','Arial', sans-serif;
+}
+
+.descriptionDiv h5 {
+	margin-top: 5px;
+	margin-bottom: 0px;
+	text-align: center;
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
