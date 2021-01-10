@@ -441,12 +441,14 @@ class Fire0 extends Particle {
 
 		let options = [];
 
+		//If it has been alive for 2 frames it will delete itself
 		if (this.framecount === 2) {
 			changes.push([x,y,new Air()]);
 
 			return changes;
 		}
 
+		//check if the fire can spread in any direction upward and chooses a random direction of those directions to spread the fire
 		if (y-1 >= 0){
 			if (grid[x][y-1].type === "air") {
 				options.push([x,y-1,new Fire1(this.totalFrames)]);
@@ -482,10 +484,12 @@ class Fire1 extends Particle {
 	}
 
 	update(x,y,grid) {
+		//keeps track of total frames that have passed since the fast Fire0() instance was spawned
 		this.totalFrames += 1;
 
 		let changes = [];
 
+		//if total frames that have passed is greater than the number specified, the particle dies
 		if (this.totalFrames >= this.deathFrame) {
 			changes.push([x,y,new Air()]);
 
@@ -506,6 +510,7 @@ class Torch extends Particle {
 	update(x,y,grid) {
 		let changes = [];
 
+		//check if there is air above, if so spawn fire
 		if (y-1 >= 0) {
 			if (grid[x][y-1].type === "air") {
 				changes.push([x,y-1,new Fire0()]);
