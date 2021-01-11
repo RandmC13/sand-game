@@ -1,10 +1,11 @@
 class Particle {
-	constructor(type, colour) {
+	constructor(type, colour, flammable=false) {
 		this.type = type;
 		this.colour = colour;
 		this.static = false;
 		this.liquid = false;
-		this.description = ``;
+		this.flammable = flammable;
+		if (this.flammable) {this.burning = false;}
 	}
 
 	update(x, y, grid){
@@ -465,6 +466,20 @@ class Fire0 extends Particle {
 			}
 		}
 
+		//if the fire cannot spread upwards it will move to the side
+		if (options.length === 0) {
+			if (x-1 >= 0) {
+				if (grid[x-1][y].type === "air") {
+					options.push([x-1,y,new Fire1(this.totalFrames)]);
+				}
+			}
+			if (x+1 < grid.length) {
+				if (grid[x+1][y].type === "air") {
+					options.push([x+1,y,new Fire1(this.totalFrames)]);
+				}
+			}
+		}
+
 		if (options.length > 0) {
 			const random = Math.floor(Math.random() * options.length);
 			changes.push(options[random]);
@@ -478,7 +493,7 @@ class Fire1 extends Particle {
 	constructor(totalFrames) {
 		super("fire1", [247, 55, 24]);
 		this.framecount = 0;
-		this.deathFrame = 12;
+		this.deathFrame = 15;
 
 		this.totalFrames = totalFrames;
 	}
