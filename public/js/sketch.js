@@ -24,6 +24,7 @@ let descriptions = {
 	"acid": `Acid: A green liquid that acts like water except it will dissolve metal on contact, converting it into air.`,
 	"fire0": `Fire: A particle that exists in a random colour between red and yellow and will create child particles that float upwards. Also it burns stuff.`,
 	"torch": `Torch: An orange particle that will infinitely generate fire if there is air above it.`,
+	"wood": `Wood: A brown particle that will ignite on contact with something burning. Whilst it burns it will become darker and darker until it is eventually burnt up.`, 
 };
 
 /*
@@ -74,6 +75,9 @@ function drawCircle(xc, yc, r) {
 								break;
 							case "torch":
 								grid[xc+x][Math.round(yc+y)] = new Torch();
+								break;
+							case "wood":
+								grid[xc+x][Math.round(yc+y)] = new Wood();
 						}
 					}
 				}

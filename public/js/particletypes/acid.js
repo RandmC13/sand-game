@@ -129,6 +129,8 @@ class Acid extends Particle {
 
 			return changes;			
 		}
+
+		return false;
 	}
 
 	dissipate(x,y,grid) {

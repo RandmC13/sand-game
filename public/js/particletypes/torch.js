@@ -14,5 +14,7 @@ class Torch extends Particle {
 				return changes;
 			}
 		}
+
+		return false;
 	}
 }

@@ -1,11 +1,10 @@
 class Particle {
-	constructor(type, colour, flammable=false) {
+	constructor(type, colour) {
 		this.type = type;
 		this.colour = colour;
 		this.static = false;
 		this.liquid = false;
-		this.flammable = flammable;
-		if (this.flammable) {this.burning = false;}
+		this.burning = false;
 	}
 
 	update(x, y, grid){
@@ -15,7 +14,7 @@ class Particle {
 
 class Air extends Particle {
 	constructor() {
-		super("air", [0,0,0]);
+		super("air", [45,45,45]);
 		this.static = true;
 	}
 }
@@ -102,6 +101,8 @@ class Sand extends Particle {
 
 			return changes;			
 		}
+
+		return false;
 	}
 }
 
@@ -112,8 +113,118 @@ class Water extends Particle {
 		this.density = 1;
 	}
 
+	dissipate(x,y,grid) {
+		//This function causes the water to spread out horizontally if it is unable to move downwards
+		let left = false;
+		let right = false;
+
+		if (x-1 >= 0) {
+			if (grid[x-1][y].type === "air") {
+				left = true;
+			}
+		}
+
+		if (x+1 < grid.length) {
+			if (grid[x+1][y].type === "air") {
+				right = true;
+			}
+		}
+
+		//Water has a 90% chance of moving left or right
+		if (Math.random() < 0.9) {
+
+			//If water can move left or right choose a random direction
+			if (left && right) {
+				if (Math.random() < 0.5) {
+					grid[x-1][y] = grid[x][y];
+					grid[x][y] = new Air();
+
+					
+				} else {
+					grid[x+1][y] = grid[x][y];
+					grid[x][y] = new Air();
+
+					
+				}
+			}
+
+			//If water can only move in one direction, go in that direction
+
+			if (left) {
+				grid[x-1][y] = grid[x][y];
+				grid[x][y] = new Air();
+
+				
+			}
+
+			if (right) {
+				grid[x+1][y] = grid[x][y];
+				grid[x][y] = new Air();
+
+				
+			}
+		}
+	}
+
+	putout(x,y,grid) {
+
+		//Putout adjacent burning particles
+
+		if (x-1 >= 0) {
+			if (grid[x-1][y].burning) {
+				grid[x-1][y].burning = false;
+
+			}
+			if (y-1 >= 0) {
+				if (grid[x-1][y-1].burning) {
+					grid[x-1][y-1].burning = false;
+
+				}
+			}
+			if (y+1 < grid[0].length) {
+				if (grid[x-1][y+1].burning) {
+					grid[x-1][y+1].burning = false;
+
+				}
+			}
+		}
+		if (x+1 < grid.length) {
+			if (grid[x+1][y].burning) {
+				grid[x+1][y].burning = false;
+
+			}
+			if (y-1 >= 0) {
+				if (grid[x+1][y-1].burning) {
+					grid[x+1][y-1].burning = false;
+
+				}
+			}
+			if (y+1 < grid[0].length) {
+				if (grid[x+1][y+1].burning) {
+					grid[x+1][y+1].burning = false;
+
+				}
+			}
+		}
+		if (y-1 >= 0) {
+			if (grid[x][y-1].burning) {
+				grid[x][y-1].burning = false;
+
+			}
+		}
+		if (y+1 < grid[0].length) {
+			if (grid[x][y+1].burning) {
+				grid[x][y+1].burning = false;
+
+			}
+		}
+	}
+
 	update(x,y,grid) {
 		let changes = [];
+
+		//Attempt to putout adjacent particles
+		this.putout(x,y,grid);
 
 		//If the water reaches the bottom, stop moving it
 		if (y+1 > grid[x].length-1) {
@@ -179,59 +290,8 @@ class Water extends Particle {
 
 			return changes;			
 		}
-	}
 
-	dissipate(x,y,grid) {
-		//This function causes the water to spread out horizontally if it is unable to move downwards
-		let left = false;
-		let right = false;
-
-		if (x-1 >= 0) {
-			if (grid[x-1][y].type === "air") {
-				left = true;
-			}
-		}
-
-		if (x+1 < grid.length) {
-			if (grid[x+1][y].type === "air") {
-				right = true;
-			}
-		}
-
-		//Water has a 90% chance of moving left or right
-		if (Math.random() < 0.9) {
-
-			//If water can move left or right choose a random direction
-			if (left && right) {
-				if (Math.random() < 0.5) {
-					grid[x-1][y] = grid[x][y];
-					grid[x][y] = new Air();
-
-					return true;
-				} else {
-					grid[x+1][y] = grid[x][y];
-					grid[x][y] = new Air();
-
-					return true;
-				}
-			}
-
-			//If water can only move in one direction, go in that direction
-
-			if (left) {
-				grid[x-1][y] = grid[x][y];
-				grid[x][y] = new Air();
-
-				return true;
-			}
-
-			if (right) {
-				grid[x+1][y] = grid[x][y];
-				grid[x][y] = new Air();
-
-				return true;
-			}
-		}
+		return false;
 	}
 }
 
@@ -246,6 +306,7 @@ class Fire0 extends Particle {
 		this.framecount = 0;
 
 		this.totalFrames = totalFrames;
+		this.burning = true;
 	}
 
 	update(x,y,grid) {
@@ -254,6 +315,13 @@ class Fire0 extends Particle {
 		let changes = [];
 
 		let options = [];
+
+		//If burning is not true it will delete itself
+		if (!this.burning) {
+			changes.push([x,y,new Air()]);
+
+			return changes;
+		}
 
 		//If it has been alive for 2 frames it will delete itself
 		if (this.framecount === 2) {
@@ -299,23 +367,34 @@ class Fire0 extends Particle {
 
 			return changes;
 		}
+
+		return false;
 	}
 }
 
 class Fire1 extends Particle {
-	constructor(totalFrames) {
+	constructor(totalFrames=0) {
 		super("fire1", [247, 55, 24]);
 		this.framecount = 0;
 		this.deathFrame = 15;
 
 		this.totalFrames = totalFrames;
+		this.burning = true;
 	}
 
 	update(x,y,grid) {
+
 		//keeps track of total frames that have passed since the fast Fire0() instance was spawned
 		this.totalFrames += 1;
 
 		let changes = [];
+
+		//If burning is not true it will delete itself
+		if (!this.burning) {
+			changes.push([x,y,new Air()]);
+
+			return changes;
+		}
 
 		//if total frames that have passed is greater than the number specified, the particle dies
 		if (this.totalFrames >= this.deathFrame) {
@@ -326,6 +405,34 @@ class Fire1 extends Particle {
 
 		changes.push([x,y,new Fire0(this.totalFrames)]);
 		
-		return changes;
+		if (changes.length > 0){return changes;} else {return false;}
+	}
+}
+
+class Fire2 extends Particle {
+	constructor() {
+		let green = Math.round(Math.random() * 30) + 170;
+		super("fire2", [255,green,0]);
+		this.burning = true;
+	}
+
+	update(x,y,grid) {
+		let changes = [];
+
+		//If burning is not true it will delete itself
+		if (!this.burning) {
+			changes.push([x,y,new Air()]);
+
+			return changes;
+		}
+
+		//There is an 80% chance that it will decay into fire1
+		if (Math.random() < 0.8) {
+			changes.push([x,y,new Fire1()]);
+
+			return changes;
+		}
+
+		return false;
 	}
 }
