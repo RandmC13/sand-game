@@ -5,6 +5,7 @@ class Particle {
 		this.static = false;
 		this.liquid = false;
 		this.burning = false;
+		this.putout = false;
 	}
 
 	update(x, y, grid){
@@ -40,7 +41,7 @@ class Sand extends Particle {
 		if (y+1 > grid[x].length-1) {
 			this.static = true;
 			return false;
-		} 
+		}
 
 		//If air is below the sand, it falls
 		if (grid[x][y+1].type === "air") {
@@ -99,7 +100,7 @@ class Sand extends Particle {
 			changes.push([x+1,y+1,grid[x][y]]);
 			changes.push([x,y,new Air()]);
 
-			return changes;			
+			return changes;
 		}
 
 		return false;
@@ -139,12 +140,12 @@ class Water extends Particle {
 					grid[x-1][y] = grid[x][y];
 					grid[x][y] = new Air();
 
-					
+
 				} else {
 					grid[x+1][y] = grid[x][y];
 					grid[x][y] = new Air();
 
-					
+
 				}
 			}
 
@@ -154,68 +155,68 @@ class Water extends Particle {
 				grid[x-1][y] = grid[x][y];
 				grid[x][y] = new Air();
 
-				
+
 			}
 
 			if (right) {
 				grid[x+1][y] = grid[x][y];
 				grid[x][y] = new Air();
 
-				
+
 			}
 		}
 	}
 
-	putout(x,y,grid) {
+	putoutBurning(x,y,grid) {
 
 		//Putout adjacent burning particles
 
 		if (x-1 >= 0) {
 			if (grid[x-1][y].burning) {
 				grid[x-1][y].burning = false;
-
+				grid[x-1][y].putout = true;
 			}
 			if (y-1 >= 0) {
 				if (grid[x-1][y-1].burning) {
 					grid[x-1][y-1].burning = false;
-
+					grid[x-1][y-1].putout = true;
 				}
 			}
 			if (y+1 < grid[0].length) {
 				if (grid[x-1][y+1].burning) {
 					grid[x-1][y+1].burning = false;
-
+					grid[x-1][y+1].putout = true;
 				}
 			}
 		}
 		if (x+1 < grid.length) {
 			if (grid[x+1][y].burning) {
 				grid[x+1][y].burning = false;
-
+				grid[x+1][y].putout = true;
 			}
 			if (y-1 >= 0) {
 				if (grid[x+1][y-1].burning) {
 					grid[x+1][y-1].burning = false;
-
+					grid[x+1][y-1].putout = true;
 				}
 			}
 			if (y+1 < grid[0].length) {
 				if (grid[x+1][y+1].burning) {
 					grid[x+1][y+1].burning = false;
-
+					grid[x+1][y+1].putout = true;
 				}
 			}
 		}
 		if (y-1 >= 0) {
 			if (grid[x][y-1].burning) {
 				grid[x][y-1].burning = false;
-
+				grid[x][y-1].putout = true;
 			}
 		}
 		if (y+1 < grid[0].length) {
 			if (grid[x][y+1].burning) {
 				grid[x][y+1].burning = false;
-
+				grid[x][y+1].putout = true;
 			}
 		}
 	}
@@ -224,12 +225,12 @@ class Water extends Particle {
 		let changes = [];
 
 		//Attempt to putout adjacent particles
-		this.putout(x,y,grid);
+		this.putoutBurning(x,y,grid);
 
 		//If the water reaches the bottom, stop moving it
 		if (y+1 > grid[x].length-1) {
 			return false;
-		} 
+		}
 
 		//If air is below the water, it falls
 		if (grid[x][y+1].type === "air") {
@@ -244,7 +245,7 @@ class Water extends Particle {
 			changes.push([x,y+1,grid[x][y]]);
 			changes.push([x,y,grid[x][y+1]]);
 
-			return changes;	
+			return changes;
 		}
 
 		//If air is down and to the left of the water, move it there
@@ -288,7 +289,7 @@ class Water extends Particle {
 			changes.push([x+1,y+1,grid[x][y]]);
 			changes.push([x,y,new Air()]);
 
-			return changes;			
+			return changes;
 		}
 
 		return false;
@@ -404,7 +405,7 @@ class Fire1 extends Particle {
 		}
 
 		changes.push([x,y,new Fire0(this.totalFrames)]);
-		
+
 		if (changes.length > 0){return changes;} else {return false;}
 	}
 }
